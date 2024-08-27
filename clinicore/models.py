@@ -1,5 +1,7 @@
+from typing import overload
+
 from bionty import ids as bionty_ids
-from bionty.models import BioRecord, CellType, Disease, Ethnicity, Tissue
+from bionty.models import BioRecord, CellType, Disease, Ethnicity, Source, Tissue
 from django.db import models
 from django.db.models import PROTECT
 from lnschema_core import ids
@@ -108,21 +110,75 @@ class Patient(Record, CanValidate, TracksRun, TracksUpdates):
     """Whether the patient is deceased."""
     deceased_date = models.DateField(db_index=True, null=True, default=None)
     """Date of death of the patient."""
+    artifacts = models.ManyToManyField(Artifact, related_name="patients")
+    """Artifacts linked to the patient."""
 
 
-class Medication(BioRecord):
+class Medication(BioRecord, TracksRun, TracksUpdates):
     """Models a medication."""
 
-    id = models.AutoField(primary_key=True)
+    class Meta(BioRecord.Meta, TracksRun.Meta, TracksUpdates.Meta):
+        abstract = False
+        unique_together = (("name", "ontology_id"),)
+
+    _name_field: str = "name"
+    _ontology_id_field: str = "ontology_id"
+
+    id: int = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
-    uid = models.CharField(unique=True, max_length=12, default=bionty_ids.ontology)
-    """Universal id, valid across DB instances."""
-    ontology_id = models.CharField(
+    uid: str = models.CharField(unique=True, max_length=8, default=bionty_ids.ontology)
+    """A universal id (hash of selected field)."""
+    name: str = models.CharField(max_length=256, db_index=True)
+    """Name of the medication."""
+    ontology_id: str | None = models.CharField(
         max_length=32, db_index=True, null=True, default=None
     )
-    """Ontology id of the medication."""
-    name = models.CharField(max_length=255, db_index=True, null=True, default=None)
-    """Name of the medication."""
+    """Ontology ID of the medication."""
+    chembl_id: str | None = models.CharField(
+        max_length=32, db_index=True, null=True, default=None
+    )
+    """ChEMBL ID of the medication."""
+    abbr: str | None = models.CharField(
+        max_length=32, db_index=True, unique=True, null=True, default=None
+    )
+    """A unique abbreviation of medication."""
+    synonyms: str | None = models.TextField(null=True, default=None)
+    """Bar-separated (|) synonyms that correspond to this medication."""
+    description: str | None = models.TextField(null=True, default=None)
+    """Description of the medication."""
+    parents: "Medication" = models.ManyToManyField(
+        "self", symmetrical=False, related_name="children"
+    )
+    """Parent medication records."""
+    artifacts: Artifact = models.ManyToManyField(Artifact, related_name="medications")
+    """Artifacts linked to the medication."""
+
+    @overload
+    def __init__(
+        self,
+        name: str,
+        ontology_id: str | None,
+        abbr: str | None,
+        synonyms: str | None,
+        description: str | None,
+        parents: list["Medication"],
+        source: Source | None,
+    ):
+        ...
+
+    @overload
+    def __init__(
+        self,
+        *db_args,
+    ):
+        ...
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
 
 
 class Treatment(Record, CanValidate, TracksRun, TracksUpdates):
