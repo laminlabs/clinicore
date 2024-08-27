@@ -1,8 +1,8 @@
-"""A clinical schema.
+"""A clinicorel schema.
 
 Import the package::
 
-   import clinica
+   import clinicore
 
 This is the complete API reference:
 

@@ -14,12 +14,12 @@ from lnschema_core.models import (
 
 
 class Project(Record, CanValidate, TracksRun, TracksUpdates):
-    """Models a clinical project of :class:`clinica.Project`.
+    """Models a clinicorel project of :class:`clinicore.Project`.
 
     Example:
         >>> project = Project(
         ...     name="Clinical trial of drug X in patients with disease Y",
-        ...     description="A clinical trial to evaluate the efficacy of drug X in patients with disease Y.",
+        ...     description="A clinicorel trial to evaluate the efficacy of drug X in patients with disease Y.",
         ... ).save()
     """
 
@@ -71,7 +71,7 @@ class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
 
 
 class Patient(Record, CanValidate, TracksRun, TracksUpdates):
-    """Models a patient in a clinical study.
+    """Models a patient in a clinicorel study.
 
     Examples:
         >>> patient = Patient(
