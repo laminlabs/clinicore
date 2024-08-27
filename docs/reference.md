@@ -1,5 +1,5 @@
 # Reference
 
 ```{eval-rst}
-.. automodule:: clinica
+.. automodule:: clinicore
 ```

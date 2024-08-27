@@ -1,4 +1,4 @@
-# clinica: A clinical schema
+# clinicore: A clinicorel schema
 
 ## Contributing
 
