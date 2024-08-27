@@ -22,7 +22,7 @@ def lint(session: nox.Session) -> None:
 
 @nox.session()
 def build(session):
-    install_lamindb(session, branch="main", extras="bionty")
+    install_lamindb(session, branch="main", extras="bionty,aws")
     run(session, "uv pip install --system .[dev]")
     login_testuser1(session)
     run_pytest(session)
