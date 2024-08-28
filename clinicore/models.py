@@ -16,7 +16,7 @@ from lnschema_core.models import (
 
 
 class Project(Record, CanValidate, TracksRun, TracksUpdates):
-    """Models a clinicorel project of :class:`clinicore.Project`.
+    """Models a clinical project.
 
     Example:
         >>> project = Project(
@@ -73,11 +73,12 @@ class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
 
 
 class Patient(Record, CanValidate, TracksRun, TracksUpdates):
-    """Models a patient in a clinicorel study.
-
+    """Models a patient in a clinical study.
+    
     Examples:
         >>> patient = Patient(
-        ...     name="Patient 1",
+        ...     uid="internal_patient_id_5446"
+        ...     name="Patient 5446",
         ...     age=45,
         ...     gender="female"
         ... ).save()
@@ -93,7 +94,7 @@ class Patient(Record, CanValidate, TracksRun, TracksUpdates):
     id = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
     uid = models.CharField(unique=True, max_length=12, default=ids.base62_12)
-    """Universal id, valid across DB instances."""
+    """Universal id, valid across DB instances. Use this field to model internal patient IDs."""
     name = models.CharField(max_length=255, default=None, db_index=True)
     """Name of the patient."""
     age = models.IntegerField(null=True, default=None, db_index=True)
