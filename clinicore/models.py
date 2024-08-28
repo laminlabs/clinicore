@@ -74,7 +74,7 @@ class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
 
 class Patient(Record, CanValidate, TracksRun, TracksUpdates):
     """Models a patient in a clinical study.
-    
+
     Examples:
         >>> patient = Patient(
         ...     uid="internal_patient_id_5446"
