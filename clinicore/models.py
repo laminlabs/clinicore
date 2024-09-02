@@ -62,12 +62,22 @@ class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
     """Batch label of the biosample."""
     description = models.TextField(null=True, default=None)
     """Description of the biosample."""
+    patient = models.ForeignKey(
+        "Patient", PROTECT, related_name="biosamples", null=True, default=None
+    )
+    """Patient linked to the biosample."""
+    project = models.ForeignKey(
+        "Project", PROTECT, related_name="biosamples", null=True, default=None
+    )
+    """Project linked to the biosample."""
     tissues = models.ManyToManyField(Tissue, related_name="biosamples")
     """Tissues linked to the biosample."""
     cell_types = models.ManyToManyField(CellType, related_name="biosamples")
     """Cell types linked to the biosample."""
     diseases = models.ManyToManyField(Disease, related_name="biosamples")
     """Diseases linked to the biosample."""
+    medications = models.ManyToManyField("Medication", related_name="biosamples")
+    """Medications linked to the biosample."""
     artifacts = models.ManyToManyField(Artifact, related_name="biosamples")
     """Artifacts linked to the biosample."""
 
