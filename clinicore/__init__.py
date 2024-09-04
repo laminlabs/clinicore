@@ -10,9 +10,9 @@ This is the complete API reference:
    :toctree: .
 
    Biosample
+   ClinicalTrial
    Medication
    Patient
-   Project
    Treatment
 """
 
@@ -33,8 +33,8 @@ if _check_instance_setup():
     del __getattr__  # delete so that imports work out
     from .models import (
         Biosample,
+        ClinicalTrial,
         Medication,
         Patient,
-        Project,
         Treatment,
     )

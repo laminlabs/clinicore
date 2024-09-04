@@ -15,12 +15,12 @@ from lnschema_core.models import (
 )
 
 
-class Project(Record, CanValidate, TracksRun, TracksUpdates):
-    """Models a clinical project.
+class ClinicalTrial(Record, CanValidate, TracksRun, TracksUpdates):
+    """Models a ClinicalTrials.
 
     Example:
-        >>> project = Project(
-        ...     name="Clinical trial of drug X in patients with disease Y",
+        >>> trail = ClinicalTrial(
+        ...     name="NCT00000000",
         ...     description="A clinicorel trial to evaluate the efficacy of drug X in patients with disease Y.",
         ... ).save()
     """
@@ -30,16 +30,20 @@ class Project(Record, CanValidate, TracksRun, TracksUpdates):
 
     id = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
-    uid = models.CharField(unique=True, max_length=12, default=ids.base62_12)
+    uid = models.CharField(unique=True, max_length=8, default=ids.base62_8)
     """Universal id, valid across DB instances."""
     name = models.CharField(max_length=255, default=None, db_index=True)
-    """Name of the project."""
+    """ClinicalTrials.gov ID, the format is "NCT" followed by an 8-digit number."""
+    title = models.TextField(null=True, default=None)
+    """Official title of the clinical trial."""
+    objective = models.TextField(null=True, default=None)
+    """Objective of the clinical trial."""
     description = models.TextField(null=True, default=None)
-    """Description of the project."""
-    artifacts = models.ManyToManyField(Artifact, related_name="projects")
-    """Artifacts linked to the project."""
-    collections = models.ManyToManyField(Collection, related_name="projects")
-    """Collections linked to the project."""
+    """Description of the clinical trial."""
+    artifacts = models.ManyToManyField(Artifact, related_name="clinical_trials")
+    """Artifacts linked to the clinical trial."""
+    collections = models.ManyToManyField(Collection, related_name="clinical_trials")
+    """Collections linked to the clinical trial."""
 
 
 class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
@@ -66,10 +70,10 @@ class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
         "Patient", PROTECT, related_name="biosamples", null=True, default=None
     )
     """Patient linked to the biosample."""
-    project = models.ForeignKey(
-        "Project", PROTECT, related_name="biosamples", null=True, default=None
+    clinical_trial = models.ForeignKey(
+        ClinicalTrial, PROTECT, related_name="biosamples", null=True, default=None
     )
-    """Project linked to the biosample."""
+    """Clinical trial linked to the biosample."""
     tissues = models.ManyToManyField(Tissue, related_name="biosamples")
     """Tissues linked to the biosample."""
     cell_types = models.ManyToManyField(CellType, related_name="biosamples")
