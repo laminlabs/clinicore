@@ -30,7 +30,7 @@ class Project(Record, CanValidate, TracksRun, TracksUpdates):
 
     id = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
-    uid = models.CharField(unique=True, max_length=8, default=ids.base62_8)
+    uid = models.CharField(unique=True, max_length=12, default=ids.base62_12)
     """Universal id, valid across DB instances."""
     name = models.CharField(max_length=255, default=None, db_index=True)
     """Name of the project."""
