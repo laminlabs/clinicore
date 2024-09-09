@@ -1,3 +1,5 @@
+import os
+
 import nox
 from laminci.nox import (
     build_docs,
@@ -13,6 +15,7 @@ from laminci.nox import (
 # directory in every github action runner
 # this also allows to break out an installation section
 nox.options.default_venv_backend = "none"
+IS_PR = os.getenv("GITHUB_EVENT_NAME") != "push"
 
 
 @nox.session
@@ -22,7 +25,8 @@ def lint(session: nox.Session) -> None:
 
 @nox.session()
 def build(session):
-    install_lamindb(session, branch="main", extras="bionty,aws")
+    branch = "main" if IS_PR else "release"  # point back to "release"
+    install_lamindb(session, branch=branch, extras="bionty,aws")
     run(session, "uv pip install --system .[dev]")
     login_testuser1(session)
     run_pytest(session)
