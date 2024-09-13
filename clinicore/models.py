@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import overload
 
 from bionty import ids as bionty_ids
@@ -161,7 +163,7 @@ class Medication(BioRecord, TracksRun, TracksUpdates):
     """Bar-separated (|) synonyms that correspond to this medication."""
     description: str | None = models.TextField(null=True, default=None)
     """Description of the medication."""
-    parents: "Medication" = models.ManyToManyField(
+    parents: Medication = models.ManyToManyField(
         "self", symmetrical=False, related_name="children"
     )
     """Parent medication records."""
@@ -176,7 +178,7 @@ class Medication(BioRecord, TracksRun, TracksUpdates):
         abbr: str | None,
         synonyms: str | None,
         description: str | None,
-        parents: list["Medication"],
+        parents: list[Medication],
         source: Source | None,
     ):
         ...
