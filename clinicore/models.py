@@ -5,12 +5,14 @@ from typing import overload
 from bionty import ids as bionty_ids
 from bionty.models import BioRecord, CellType, Disease, Ethnicity, Source, Tissue
 from django.db import models
-from django.db.models import PROTECT
+from django.db.models import CASCADE, PROTECT
 from lnschema_core import ids
 from lnschema_core.models import (
     Artifact,
     CanValidate,
     Collection,
+    Feature,
+    LinkORM,
     Record,
     TracksRun,
     TracksUpdates,
@@ -42,10 +44,31 @@ class ClinicalTrial(Record, CanValidate, TracksRun, TracksUpdates):
     """Objective of the clinical trial."""
     description = models.TextField(null=True, default=None)
     """Description of the clinical trial."""
-    artifacts = models.ManyToManyField(Artifact, related_name="clinical_trials")
-    """Artifacts linked to the clinical trial."""
     collections = models.ManyToManyField(Collection, related_name="clinical_trials")
     """Collections linked to the clinical trial."""
+    artifacts = models.ManyToManyField(
+        Artifact, through="ArtifactClinicalTrial", related_name="clinical_trials"
+    )
+    """Artifacts linked to the clinical trial."""
+
+
+class ArtifactClinicalTrial(Record, LinkORM, TracksRun):
+    id: int = models.BigAutoField(primary_key=True)
+    artifact: Artifact = models.ForeignKey(
+        Artifact, CASCADE, related_name="links_clinical_trial"
+    )
+    clinicaltrial: ClinicalTrial = models.ForeignKey(
+        ClinicalTrial, PROTECT, related_name="links_artifact"
+    )
+    feature: Feature = models.ForeignKey(
+        Feature,
+        PROTECT,
+        null=True,
+        default=None,
+        related_name="links_artifactclinicaltrial",
+    )
+    label_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
+    feature_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
 
 
 class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
@@ -84,8 +107,29 @@ class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
     """Diseases linked to the biosample."""
     medications = models.ManyToManyField("Medication", related_name="biosamples")
     """Medications linked to the biosample."""
-    artifacts = models.ManyToManyField(Artifact, related_name="biosamples")
+    artifacts = models.ManyToManyField(
+        Artifact, through="ArtifactBiosample", related_name="biosamples"
+    )
     """Artifacts linked to the biosample."""
+
+
+class ArtifactBiosample(Record, LinkORM, TracksRun):
+    id: int = models.BigAutoField(primary_key=True)
+    artifact: Artifact = models.ForeignKey(
+        Artifact, CASCADE, related_name="links_biosample"
+    )
+    biosample: Biosample = models.ForeignKey(
+        Biosample, PROTECT, related_name="links_artifact"
+    )
+    feature: Feature = models.ForeignKey(
+        Feature,
+        PROTECT,
+        null=True,
+        default=None,
+        related_name="links_artifactbiosample",
+    )
+    label_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
+    feature_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
 
 
 class Patient(Record, CanValidate, TracksRun, TracksUpdates):
@@ -127,8 +171,29 @@ class Patient(Record, CanValidate, TracksRun, TracksUpdates):
     """Whether the patient is deceased."""
     deceased_date = models.DateField(db_index=True, null=True, default=None)
     """Date of death of the patient."""
-    artifacts = models.ManyToManyField(Artifact, related_name="patients")
+    artifacts = models.ManyToManyField(
+        Artifact, through="ArtifactPatient", related_name="patients"
+    )
     """Artifacts linked to the patient."""
+
+
+class ArtifactPatient(Record, LinkORM, TracksRun):
+    id: int = models.BigAutoField(primary_key=True)
+    artifact: Artifact = models.ForeignKey(
+        Artifact, CASCADE, related_name="links_patient"
+    )
+    patient: Patient = models.ForeignKey(
+        Patient, PROTECT, related_name="links_artifact"
+    )
+    feature: Feature = models.ForeignKey(
+        Feature,
+        PROTECT,
+        null=True,
+        default=None,
+        related_name="links_artifactpatient",
+    )
+    label_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
+    feature_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
 
 
 class Medication(BioRecord, TracksRun, TracksUpdates):
@@ -167,7 +232,9 @@ class Medication(BioRecord, TracksRun, TracksUpdates):
         "self", symmetrical=False, related_name="children"
     )
     """Parent medication records."""
-    artifacts: Artifact = models.ManyToManyField(Artifact, related_name="medications")
+    artifacts: Artifact = models.ManyToManyField(
+        Artifact, through="ArtifactMedication", related_name="medications"
+    )
     """Artifacts linked to the medication."""
 
     @overload
@@ -196,6 +263,25 @@ class Medication(BioRecord, TracksRun, TracksUpdates):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+
+
+class ArtifactMedication(Record, LinkORM, TracksRun):
+    id: int = models.BigAutoField(primary_key=True)
+    artifact: Artifact = models.ForeignKey(
+        Artifact, CASCADE, related_name="links_medication"
+    )
+    medication: Medication = models.ForeignKey(
+        Medication, PROTECT, related_name="links_artifact"
+    )
+    feature: Feature = models.ForeignKey(
+        Feature,
+        PROTECT,
+        null=True,
+        default=None,
+        related_name="links_artifactmedication",
+    )
+    label_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
+    feature_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
 
 
 class Treatment(Record, CanValidate, TracksRun, TracksUpdates):
@@ -241,5 +327,26 @@ class Treatment(Record, CanValidate, TracksRun, TracksUpdates):
     """Route of administration of the treatment."""
     site = models.CharField(max_length=32, null=True, default=None)
     """Body site of administration of the treatment."""
-    artifacts = models.ManyToManyField(Artifact, related_name="treatments")
+    artifacts = models.ManyToManyField(
+        Artifact, through="ArtifactTreatment", related_name="treatments"
+    )
     """Artifacts linked to the treatment."""
+
+
+class ArtifactTreatment(Record, LinkORM, TracksRun):
+    id: int = models.BigAutoField(primary_key=True)
+    artifact: Artifact = models.ForeignKey(
+        Artifact, CASCADE, related_name="links_treatment"
+    )
+    treatment: Treatment = models.ForeignKey(
+        Treatment, PROTECT, related_name="links_artifact"
+    )
+    feature: Feature = models.ForeignKey(
+        Feature,
+        PROTECT,
+        null=True,
+        default=None,
+        related_name="links_artifacttreatment",
+    )
+    label_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
+    feature_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
