@@ -1,4 +1,4 @@
-"""A clinicorel schema.
+"""A clinical schema.
 
 Import the package::
 
@@ -21,8 +21,6 @@ __version__ = "0.4.0"  # denote a pre-release for 0.1.0 with 0.1rc1
 from lamindb_setup import _check_instance_setup
 
 
-# trigger instance loading if users
-# want to access attributes
 def __getattr__(name):
     if name != "models":
         _check_instance_setup(from_module="clinicore")
