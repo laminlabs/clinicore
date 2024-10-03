@@ -18,7 +18,7 @@ Home = "https://github.com/laminlabs/clinicore"
 dev = [
     "pre-commit",
     "nox",
-    "pytest>=6.0",
+    "pytest>=8.3.3",
     "pytest-cov",
     "nbproject_test",
 ]
