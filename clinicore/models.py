@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import overload
+from typing import TYPE_CHECKING, overload
 
 from bionty import ids as bionty_ids
 from bionty.models import BioRecord, CellType, Disease, Ethnicity, Source, Tissue
 from django.db import models
-from django.db.models import CASCADE, PROTECT
+from django.db.models import CASCADE, PROTECT, DurationField
 from lnschema_core import ids
 from lnschema_core.models import (
     Artifact,
@@ -17,6 +17,9 @@ from lnschema_core.models import (
     TracksRun,
     TracksUpdates,
 )
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class ClinicalTrial(Record, CanValidate, TracksRun, TracksUpdates):
@@ -32,21 +35,23 @@ class ClinicalTrial(Record, CanValidate, TracksRun, TracksUpdates):
     class Meta(Record.Meta, TracksRun.Meta, TracksUpdates.Meta):
         abstract = False
 
-    id = models.AutoField(primary_key=True)
+    id: int = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
-    uid = models.CharField(unique=True, max_length=8, default=ids.base62_8)
+    uid: str = models.CharField(unique=True, max_length=8, default=ids.base62_8)
     """Universal id, valid across DB instances."""
-    name = models.CharField(max_length=255, default=None, db_index=True)
+    name: str | None = models.CharField(max_length=255, default=None, db_index=True)
     """ClinicalTrials.gov ID, the format is "NCT" followed by an 8-digit number."""
-    title = models.TextField(null=True, default=None)
+    title: str | None = models.TextField(null=True, default=None)
     """Official title of the clinical trial."""
-    objective = models.TextField(null=True, default=None)
+    objective: str | None = models.TextField(null=True, default=None)
     """Objective of the clinical trial."""
-    description = models.TextField(null=True, default=None)
+    description: str | None = models.TextField(null=True, default=None)
     """Description of the clinical trial."""
-    collections = models.ManyToManyField(Collection, related_name="clinical_trials")
+    collections: Collection = models.ManyToManyField(
+        Collection, related_name="clinical_trials"
+    )
     """Collections linked to the clinical trial."""
-    artifacts = models.ManyToManyField(
+    artifacts: Artifact = models.ManyToManyField(
         Artifact, through="ArtifactClinicalTrial", related_name="clinical_trials"
     )
     """Artifacts linked to the clinical trial."""
@@ -81,33 +86,39 @@ class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
         ... ).save()
     """
 
-    id = models.AutoField(primary_key=True)
+    id: int = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
-    uid = models.CharField(unique=True, max_length=12, default=ids.base62_12)
+    uid: str = models.CharField(unique=True, max_length=12, default=ids.base62_12)
     """Universal id, valid across DB instances."""
-    name = models.CharField(max_length=255, default=None, db_index=True, null=True)
+    name: str | None = models.CharField(
+        max_length=255, default=None, db_index=True, null=True
+    )
     """Name of the biosample."""
-    batch = models.CharField(max_length=60, default=None, null=True, db_index=True)
+    batch: str | None = models.CharField(
+        max_length=60, default=None, null=True, db_index=True
+    )
     """Batch label of the biosample."""
-    description = models.TextField(null=True, default=None)
+    description: str | None = models.TextField(null=True, default=None)
     """Description of the biosample."""
-    patient = models.ForeignKey(
+    patient: Patient = models.ForeignKey(
         "Patient", PROTECT, related_name="biosamples", null=True, default=None
     )
     """Patient linked to the biosample."""
-    clinical_trial = models.ForeignKey(
+    clinical_trial: ClinicalTrial = models.ForeignKey(
         ClinicalTrial, PROTECT, related_name="biosamples", null=True, default=None
     )
     """Clinical trial linked to the biosample."""
-    tissues = models.ManyToManyField(Tissue, related_name="biosamples")
+    tissues: Tissue = models.ManyToManyField(Tissue, related_name="biosamples")
     """Tissues linked to the biosample."""
-    cell_types = models.ManyToManyField(CellType, related_name="biosamples")
+    cell_types: CellType = models.ManyToManyField(CellType, related_name="biosamples")
     """Cell types linked to the biosample."""
-    diseases = models.ManyToManyField(Disease, related_name="biosamples")
+    diseases: Disease = models.ManyToManyField(Disease, related_name="biosamples")
     """Diseases linked to the biosample."""
-    medications = models.ManyToManyField("Medication", related_name="biosamples")
+    medications: Medication = models.ManyToManyField(
+        "Medication", related_name="biosamples"
+    )
     """Medications linked to the biosample."""
-    artifacts = models.ManyToManyField(
+    artifacts: Artifact = models.ManyToManyField(
         Artifact, through="ArtifactBiosample", related_name="biosamples"
     )
     """Artifacts linked to the biosample."""
@@ -151,27 +162,33 @@ class Patient(Record, CanValidate, TracksRun, TracksUpdates):
         ("unknown", "Unknown"),
     ]
 
-    id = models.AutoField(primary_key=True)
+    id: int = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
-    uid = models.CharField(unique=True, max_length=12, default=ids.base62_12)
+    uid: str = models.CharField(unique=True, max_length=12, default=ids.base62_12)
     """Universal id, valid across DB instances. Use this field to model internal patient IDs."""
-    name = models.CharField(max_length=255, default=None, db_index=True)
+    name: str | None = models.CharField(max_length=255, default=None, db_index=True)
     """Name of the patient."""
-    age = models.IntegerField(null=True, default=None, db_index=True)
+    age: int | None = models.IntegerField(null=True, default=None, db_index=True)
     """Age of the patient."""
-    gender = models.CharField(
+    gender: str | None = models.CharField(
         max_length=10, choices=GENDER_CHOICES, null=True, default=None, db_index=True
     )
     """Gender of the patient."""
-    ethnicity = models.ForeignKey(Ethnicity, PROTECT, null=True, default=None)
+    ethnicity: Ethnicity = models.ForeignKey(
+        Ethnicity, PROTECT, null=True, default=None
+    )
     """Ethnicity of the patient."""
-    birth_date = models.DateField(db_index=True, null=True, default=None)
+    birth_date: datetime | None = models.DateField(
+        db_index=True, null=True, default=None
+    )
     """Birth date of the patient."""
-    deceased = models.BooleanField(db_index=True, null=True, default=None)
+    deceased: bool | None = models.BooleanField(db_index=True, null=True, default=None)
     """Whether the patient is deceased."""
-    deceased_date = models.DateField(db_index=True, null=True, default=None)
+    deceased_date: datetime | None = models.DateField(
+        db_index=True, null=True, default=None
+    )
     """Date of death of the patient."""
-    artifacts = models.ManyToManyField(
+    artifacts: Artifact = models.ManyToManyField(
         Artifact, through="ArtifactPatient", related_name="patients"
     )
     """Artifacts linked to the patient."""
@@ -303,31 +320,35 @@ class Treatment(Record, CanValidate, TracksRun, TracksUpdates):
         ("not-done", "Not Done"),
     ]
 
-    id = models.AutoField(primary_key=True)
+    id: int = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
-    uid = models.CharField(unique=True, max_length=12, default=ids.base62_12)
+    uid: str = models.CharField(unique=True, max_length=12, default=ids.base62_12)
     """Universal id, valid across DB instances."""
-    name = models.CharField(max_length=255, default=None, db_index=True)
+    name: str | None = models.CharField(max_length=255, default=None, db_index=True)
     """Name of the treatment."""
-    status = models.CharField(
+    status: str | None = models.CharField(
         max_length=16, choices=STATUS_CHOICES, null=True, default=None
     )
     """Status of the treatment."""
-    medication = models.ForeignKey(Medication, PROTECT, null=True, default=None)
+    medication: Medication | None = models.ForeignKey(
+        Medication, PROTECT, null=True, default=None
+    )
     """Medications linked to the treatment."""
-    dosage = models.FloatField(null=True, default=None)
+    dosage: float | None = models.FloatField(null=True, default=None)
     """Dosage of the treatment."""
-    dosage_unit = models.CharField(max_length=32, null=True, default=None)
+    dosage_unit: str | None = models.CharField(max_length=32, null=True, default=None)
     """Unit of the dosage."""
-    administered_datetime = models.DateTimeField(null=True, default=None)
+    administered_datetime: datetime | None = models.DateTimeField(
+        null=True, default=None
+    )
     """Date and time the treatment was administered."""
-    duration = models.DurationField(null=True, default=None)
+    duration: DurationField = models.DurationField(null=True, default=None)
     """Duration of the treatment."""
-    route = models.CharField(max_length=32, null=True, default=None)
+    route: str | None = models.CharField(max_length=32, null=True, default=None)
     """Route of administration of the treatment."""
-    site = models.CharField(max_length=32, null=True, default=None)
+    site: str | None = models.CharField(max_length=32, null=True, default=None)
     """Body site of administration of the treatment."""
-    artifacts = models.ManyToManyField(
+    artifacts: Artifact = models.ManyToManyField(
         Artifact, through="ArtifactTreatment", related_name="treatments"
     )
     """Artifacts linked to the treatment."""
