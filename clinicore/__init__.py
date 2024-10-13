@@ -1,10 +1,15 @@
-"""A clinical schema.
+"""Basic clinical entities [`source <https://github.com/laminlabs/clinicore/blob/main/clinicore/models.py>`__].
+
+Install the module and mount it in a new instance:
+
+>>> pip install clinicore
+>>> lamin init --storage ./test-wetlab --schema bionty,clinicore
 
 Import the package::
 
-   import clinicore
+   import clinicore as cc
 
-This is the complete API reference:
+Registries:
 
 .. autosummary::
    :toctree: .
