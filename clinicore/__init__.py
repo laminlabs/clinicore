@@ -1,13 +1,13 @@
 """Basic clinical entities [`source <https://github.com/laminlabs/clinicore/blob/main/clinicore/models.py>`__].
 
-Install the module and mount it in a new instance:
+Install and mount `clinicore` in a new instance:
 
 >>> pip install clinicore
->>> lamin init --storage ./test-wetlab --schema bionty,clinicore
+>>> lamin init --storage ./test-clinicore --schema bionty,clinicore
 
-Import the package::
+Import the package:
 
-   import clinicore as cc
+>>> import clinicore as cc
 
 Registries:
 
