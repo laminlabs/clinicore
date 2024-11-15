@@ -21,7 +21,7 @@ from lnschema_core.fields import (
 )
 from lnschema_core.models import (
     Artifact,
-    CanValidate,
+    CanCurate,
     Collection,
     Feature,
     LinkORM,
@@ -31,7 +31,7 @@ from lnschema_core.models import (
 )
 
 
-class ClinicalTrial(Record, CanValidate, TracksRun, TracksUpdates):
+class ClinicalTrial(Record, CanCurate, TracksRun, TracksUpdates):
     """Models a ClinicalTrials.
 
     Example:
@@ -85,7 +85,7 @@ class ArtifactClinicalTrial(Record, LinkORM, TracksRun):
     feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
-class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
+class Biosample(Record, CanCurate, TracksRun, TracksUpdates):
     """Models a specimen derived from an patient, such as tissue, blood, or cells.
 
     Examples:
@@ -144,7 +144,7 @@ class ArtifactBiosample(Record, LinkORM, TracksRun):
     feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
-class Patient(Record, CanValidate, TracksRun, TracksUpdates):
+class Patient(Record, CanCurate, TracksRun, TracksUpdates):
     """Models a patient in a clinical study.
 
     Examples:
@@ -255,15 +255,13 @@ class Medication(BioRecord, TracksRun, TracksUpdates):
         description: str | None,
         parents: list[Medication],
         source: Source | None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(
         self,
         *db_args,
-    ):
-        ...
+    ): ...
 
     def __init__(
         self,
@@ -290,7 +288,7 @@ class ArtifactMedication(Record, LinkORM, TracksRun):
     feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
-class Treatment(Record, CanValidate, TracksRun, TracksUpdates):
+class Treatment(Record, CanCurate, TracksRun, TracksUpdates):
     """Models compound treatments such as drugs.
 
     Examples:
