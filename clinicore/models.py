@@ -1,13 +1,24 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, overload
 from datetime import datetime  # noqa
+from typing import overload
 
 from bionty import ids as bionty_ids
 from bionty.models import BioRecord, CellType, Disease, Ethnicity, Source, Tissue
 from django.db import models
-from django.db.models import CASCADE, PROTECT, DurationField
+from django.db.models import CASCADE, PROTECT
 from lnschema_core import ids
+from lnschema_core.fields import (
+    BooleanField,
+    CharField,
+    DateField,
+    DateTimeField,
+    DurationField,
+    FloatField,
+    ForeignKey,
+    IntegerField,
+    TextField,
+)
 from lnschema_core.models import (
     Artifact,
     CanValidate,
@@ -17,17 +28,6 @@ from lnschema_core.models import (
     Record,
     TracksRun,
     TracksUpdates,
-)
-from lnschema_core.fields import (
-    CharField,
-    TextField,
-    ForeignKey,
-    BooleanField,
-    IntegerField,
-    DateField,
-    DateTimeField,
-    FloatField,
-    DurationField,
 )
 
 
@@ -255,13 +255,15 @@ class Medication(BioRecord, TracksRun, TracksUpdates):
         description: str | None,
         parents: list[Medication],
         source: Source | None,
-    ): ...
+    ):
+        ...
 
     @overload
     def __init__(
         self,
         *db_args,
-    ): ...
+    ):
+        ...
 
     def __init__(
         self,
