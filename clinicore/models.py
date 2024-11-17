@@ -1,15 +1,27 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, overload
+from datetime import datetime  # noqa
+from typing import overload
 
 from bionty import ids as bionty_ids
 from bionty.models import BioRecord, CellType, Disease, Ethnicity, Source, Tissue
 from django.db import models
-from django.db.models import CASCADE, PROTECT, DurationField
+from django.db.models import CASCADE, PROTECT
 from lnschema_core import ids
+from lnschema_core.fields import (
+    BooleanField,
+    CharField,
+    DateField,
+    DateTimeField,
+    DurationField,
+    FloatField,
+    ForeignKey,
+    IntegerField,
+    TextField,
+)
 from lnschema_core.models import (
     Artifact,
-    CanValidate,
+    CanCurate,
     Collection,
     Feature,
     LinkORM,
@@ -18,11 +30,8 @@ from lnschema_core.models import (
     TracksUpdates,
 )
 
-if TYPE_CHECKING:
-    from datetime import datetime
 
-
-class ClinicalTrial(Record, CanValidate, TracksRun, TracksUpdates):
+class ClinicalTrial(Record, CanCurate, TracksRun, TracksUpdates):
     """Models a ClinicalTrials.
 
     Example:
@@ -37,15 +46,15 @@ class ClinicalTrial(Record, CanValidate, TracksRun, TracksUpdates):
 
     id: int = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
-    uid: str = models.CharField(unique=True, max_length=8, default=ids.base62_8)
+    uid: str = CharField(unique=True, max_length=8, default=ids.base62_8)
     """Universal id, valid across DB instances."""
-    name: str | None = models.CharField(max_length=255, default=None, db_index=True)
+    name: str | None = CharField(max_length=255, default=None, db_index=True)
     """ClinicalTrials.gov ID, the format is "NCT" followed by an 8-digit number."""
-    title: str | None = models.TextField(null=True, default=None)
+    title: str | None = TextField(null=True, default=None)
     """Official title of the clinical trial."""
-    objective: str | None = models.TextField(null=True, default=None)
+    objective: str | None = TextField(null=True, default=None)
     """Objective of the clinical trial."""
-    description: str | None = models.TextField(null=True, default=None)
+    description: str | None = TextField(null=True, default=None)
     """Description of the clinical trial."""
     collections: Collection = models.ManyToManyField(
         Collection, related_name="clinical_trials"
@@ -59,24 +68,24 @@ class ClinicalTrial(Record, CanValidate, TracksRun, TracksUpdates):
 
 class ArtifactClinicalTrial(Record, LinkORM, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
-    artifact: Artifact = models.ForeignKey(
+    artifact: Artifact = ForeignKey(
         Artifact, CASCADE, related_name="links_clinical_trial"
     )
-    clinicaltrial: ClinicalTrial = models.ForeignKey(
+    clinicaltrial: ClinicalTrial = ForeignKey(
         ClinicalTrial, PROTECT, related_name="links_artifact"
     )
-    feature: Feature = models.ForeignKey(
+    feature: Feature = ForeignKey(
         Feature,
         PROTECT,
         null=True,
         default=None,
         related_name="links_artifactclinicaltrial",
     )
-    label_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
-    feature_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
+    label_ref_is_name: bool | None = BooleanField(null=True, default=None)
+    feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
-class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
+class Biosample(Record, CanCurate, TracksRun, TracksUpdates):
     """Models a specimen derived from an patient, such as tissue, blood, or cells.
 
     Examples:
@@ -88,23 +97,19 @@ class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
 
     id: int = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
-    uid: str = models.CharField(unique=True, max_length=12, default=ids.base62_12)
+    uid: str = CharField(unique=True, max_length=12, default=ids.base62_12)
     """Universal id, valid across DB instances."""
-    name: str | None = models.CharField(
-        max_length=255, default=None, db_index=True, null=True
-    )
+    name: str | None = CharField(max_length=255, default=None, db_index=True, null=True)
     """Name of the biosample."""
-    batch: str | None = models.CharField(
-        max_length=60, default=None, null=True, db_index=True
-    )
+    batch: str | None = CharField(max_length=60, default=None, null=True, db_index=True)
     """Batch label of the biosample."""
-    description: str | None = models.TextField(null=True, default=None)
+    description: str | None = TextField(null=True, default=None)
     """Description of the biosample."""
-    patient: Patient = models.ForeignKey(
+    patient: Patient = ForeignKey(
         "Patient", PROTECT, related_name="biosamples", null=True, default=None
     )
     """Patient linked to the biosample."""
-    clinical_trial: ClinicalTrial = models.ForeignKey(
+    clinical_trial: ClinicalTrial = ForeignKey(
         ClinicalTrial, PROTECT, related_name="biosamples", null=True, default=None
     )
     """Clinical trial linked to the biosample."""
@@ -126,24 +131,20 @@ class Biosample(Record, CanValidate, TracksRun, TracksUpdates):
 
 class ArtifactBiosample(Record, LinkORM, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
-    artifact: Artifact = models.ForeignKey(
-        Artifact, CASCADE, related_name="links_biosample"
-    )
-    biosample: Biosample = models.ForeignKey(
-        Biosample, PROTECT, related_name="links_artifact"
-    )
-    feature: Feature = models.ForeignKey(
+    artifact: Artifact = ForeignKey(Artifact, CASCADE, related_name="links_biosample")
+    biosample: Biosample = ForeignKey(Biosample, PROTECT, related_name="links_artifact")
+    feature: Feature = ForeignKey(
         Feature,
         PROTECT,
         null=True,
         default=None,
         related_name="links_artifactbiosample",
     )
-    label_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
-    feature_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
+    label_ref_is_name: bool | None = BooleanField(null=True, default=None)
+    feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
-class Patient(Record, CanValidate, TracksRun, TracksUpdates):
+class Patient(Record, CanCurate, TracksRun, TracksUpdates):
     """Models a patient in a clinical study.
 
     Examples:
@@ -164,29 +165,23 @@ class Patient(Record, CanValidate, TracksRun, TracksUpdates):
 
     id: int = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
-    uid: str = models.CharField(unique=True, max_length=12, default=ids.base62_12)
+    uid: str = CharField(unique=True, max_length=12, default=ids.base62_12)
     """Universal id, valid across DB instances. Use this field to model internal patient IDs."""
-    name: str | None = models.CharField(max_length=255, default=None, db_index=True)
+    name: str | None = CharField(max_length=255, default=None, db_index=True)
     """Name of the patient."""
-    age: int | None = models.IntegerField(null=True, default=None, db_index=True)
+    age: int | None = IntegerField(null=True, default=None, db_index=True)
     """Age of the patient."""
-    gender: str | None = models.CharField(
+    gender: str | None = CharField(
         max_length=10, choices=GENDER_CHOICES, null=True, default=None, db_index=True
     )
     """Gender of the patient."""
-    ethnicity: Ethnicity = models.ForeignKey(
-        Ethnicity, PROTECT, null=True, default=None
-    )
+    ethnicity: Ethnicity = ForeignKey(Ethnicity, PROTECT, null=True, default=None)
     """Ethnicity of the patient."""
-    birth_date: datetime | None = models.DateField(
-        db_index=True, null=True, default=None
-    )
+    birth_date: datetime | None = DateField(db_index=True, null=True, default=None)
     """Birth date of the patient."""
-    deceased: bool | None = models.BooleanField(db_index=True, null=True, default=None)
+    deceased: bool | None = BooleanField(db_index=True, null=True, default=None)
     """Whether the patient is deceased."""
-    deceased_date: datetime | None = models.DateField(
-        db_index=True, null=True, default=None
-    )
+    deceased_date: datetime | None = DateField(db_index=True, null=True, default=None)
     """Date of death of the patient."""
     artifacts: Artifact = models.ManyToManyField(
         Artifact, through="ArtifactPatient", related_name="patients"
@@ -196,21 +191,17 @@ class Patient(Record, CanValidate, TracksRun, TracksUpdates):
 
 class ArtifactPatient(Record, LinkORM, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
-    artifact: Artifact = models.ForeignKey(
-        Artifact, CASCADE, related_name="links_patient"
-    )
-    patient: Patient = models.ForeignKey(
-        Patient, PROTECT, related_name="links_artifact"
-    )
-    feature: Feature = models.ForeignKey(
+    artifact: Artifact = ForeignKey(Artifact, CASCADE, related_name="links_patient")
+    patient: Patient = ForeignKey(Patient, PROTECT, related_name="links_artifact")
+    feature: Feature = ForeignKey(
         Feature,
         PROTECT,
         null=True,
         default=None,
         related_name="links_artifactpatient",
     )
-    label_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
-    feature_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
+    label_ref_is_name: bool | None = BooleanField(null=True, default=None)
+    feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
 class Medication(BioRecord, TracksRun, TracksUpdates):
@@ -225,25 +216,25 @@ class Medication(BioRecord, TracksRun, TracksUpdates):
 
     id: int = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
-    uid: str = models.CharField(unique=True, max_length=8, default=bionty_ids.ontology)
+    uid: str = CharField(unique=True, max_length=8, default=bionty_ids.ontology)
     """A universal id (hash of selected field)."""
-    name: str = models.CharField(max_length=256, db_index=True)
+    name: str = CharField(max_length=256, db_index=True)
     """Name of the medication."""
-    ontology_id: str | None = models.CharField(
+    ontology_id: str | None = CharField(
         max_length=32, db_index=True, null=True, default=None
     )
     """Ontology ID of the medication."""
-    chembl_id: str | None = models.CharField(
+    chembl_id: str | None = CharField(
         max_length=32, db_index=True, null=True, default=None
     )
     """ChEMBL ID of the medication."""
-    abbr: str | None = models.CharField(
+    abbr: str | None = CharField(
         max_length=32, db_index=True, unique=True, null=True, default=None
     )
     """A unique abbreviation of medication."""
-    synonyms: str | None = models.TextField(null=True, default=None)
+    synonyms: str | None = TextField(null=True, default=None)
     """Bar-separated (|) synonyms that correspond to this medication."""
-    description: str | None = models.TextField(null=True, default=None)
+    description: str | None = TextField(null=True, default=None)
     """Description of the medication."""
     parents: Medication = models.ManyToManyField(
         "self", symmetrical=False, related_name="children"
@@ -264,15 +255,13 @@ class Medication(BioRecord, TracksRun, TracksUpdates):
         description: str | None,
         parents: list[Medication],
         source: Source | None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(
         self,
         *db_args,
-    ):
-        ...
+    ): ...
 
     def __init__(
         self,
@@ -284,24 +273,22 @@ class Medication(BioRecord, TracksRun, TracksUpdates):
 
 class ArtifactMedication(Record, LinkORM, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
-    artifact: Artifact = models.ForeignKey(
-        Artifact, CASCADE, related_name="links_medication"
-    )
-    medication: Medication = models.ForeignKey(
+    artifact: Artifact = ForeignKey(Artifact, CASCADE, related_name="links_medication")
+    medication: Medication = ForeignKey(
         Medication, PROTECT, related_name="links_artifact"
     )
-    feature: Feature = models.ForeignKey(
+    feature: Feature = ForeignKey(
         Feature,
         PROTECT,
         null=True,
         default=None,
         related_name="links_artifactmedication",
     )
-    label_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
-    feature_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
+    label_ref_is_name: bool | None = BooleanField(null=True, default=None)
+    feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
-class Treatment(Record, CanValidate, TracksRun, TracksUpdates):
+class Treatment(Record, CanCurate, TracksRun, TracksUpdates):
     """Models compound treatments such as drugs.
 
     Examples:
@@ -322,31 +309,29 @@ class Treatment(Record, CanValidate, TracksRun, TracksUpdates):
 
     id: int = models.AutoField(primary_key=True)
     """Internal id, valid only in one DB instance."""
-    uid: str = models.CharField(unique=True, max_length=12, default=ids.base62_12)
+    uid: str = CharField(unique=True, max_length=12, default=ids.base62_12)
     """Universal id, valid across DB instances."""
-    name: str | None = models.CharField(max_length=255, default=None, db_index=True)
+    name: str | None = CharField(max_length=255, default=None, db_index=True)
     """Name of the treatment."""
-    status: str | None = models.CharField(
+    status: str | None = CharField(
         max_length=16, choices=STATUS_CHOICES, null=True, default=None
     )
     """Status of the treatment."""
-    medication: Medication | None = models.ForeignKey(
+    medication: Medication | None = ForeignKey(
         Medication, PROTECT, null=True, default=None
     )
     """Medications linked to the treatment."""
-    dosage: float | None = models.FloatField(null=True, default=None)
+    dosage: float | None = FloatField(null=True, default=None)
     """Dosage of the treatment."""
-    dosage_unit: str | None = models.CharField(max_length=32, null=True, default=None)
+    dosage_unit: str | None = CharField(max_length=32, null=True, default=None)
     """Unit of the dosage."""
-    administered_datetime: datetime | None = models.DateTimeField(
-        null=True, default=None
-    )
+    administered_datetime: datetime | None = DateTimeField(null=True, default=None)
     """Date and time the treatment was administered."""
-    duration: DurationField = models.DurationField(null=True, default=None)
+    duration: DurationField = DurationField(null=True, default=None)
     """Duration of the treatment."""
-    route: str | None = models.CharField(max_length=32, null=True, default=None)
+    route: str | None = CharField(max_length=32, null=True, default=None)
     """Route of administration of the treatment."""
-    site: str | None = models.CharField(max_length=32, null=True, default=None)
+    site: str | None = CharField(max_length=32, null=True, default=None)
     """Body site of administration of the treatment."""
     artifacts: Artifact = models.ManyToManyField(
         Artifact, through="ArtifactTreatment", related_name="treatments"
@@ -356,18 +341,14 @@ class Treatment(Record, CanValidate, TracksRun, TracksUpdates):
 
 class ArtifactTreatment(Record, LinkORM, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
-    artifact: Artifact = models.ForeignKey(
-        Artifact, CASCADE, related_name="links_treatment"
-    )
-    treatment: Treatment = models.ForeignKey(
-        Treatment, PROTECT, related_name="links_artifact"
-    )
-    feature: Feature = models.ForeignKey(
+    artifact: Artifact = ForeignKey(Artifact, CASCADE, related_name="links_treatment")
+    treatment: Treatment = ForeignKey(Treatment, PROTECT, related_name="links_artifact")
+    feature: Feature = ForeignKey(
         Feature,
         PROTECT,
         null=True,
         default=None,
         related_name="links_artifacttreatment",
     )
-    label_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
-    feature_ref_is_name: bool | None = models.BooleanField(null=True, default=None)
+    label_ref_is_name: bool | None = BooleanField(null=True, default=None)
+    feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
