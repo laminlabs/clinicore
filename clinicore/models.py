@@ -48,13 +48,13 @@ class ClinicalTrial(Record, CanCurate, TracksRun, TracksUpdates):
     """Internal id, valid only in one DB instance."""
     uid: str = CharField(unique=True, max_length=8, default=ids.base62_8)
     """Universal id, valid across DB instances."""
-    name: str | None = CharField(max_length=255, default=None, db_index=True)
+    name: str | None = CharField(max_length=255, db_index=True)
     """ClinicalTrials.gov ID, the format is "NCT" followed by an 8-digit number."""
-    title: str | None = TextField(null=True, default=None)
+    title: str | None = TextField(null=True)
     """Official title of the clinical trial."""
-    objective: str | None = TextField(null=True, default=None)
+    objective: str | None = TextField(null=True)
     """Objective of the clinical trial."""
-    description: str | None = TextField(null=True, default=None)
+    description: str | None = TextField(null=True)
     """Description of the clinical trial."""
     collections: Collection = models.ManyToManyField(
         Collection, related_name="clinical_trials"
@@ -99,11 +99,11 @@ class Biosample(Record, CanCurate, TracksRun, TracksUpdates):
     """Internal id, valid only in one DB instance."""
     uid: str = CharField(unique=True, max_length=12, default=ids.base62_12)
     """Universal id, valid across DB instances."""
-    name: str | None = CharField(max_length=255, default=None, db_index=True, null=True)
+    name: str | None = CharField(db_index=True, null=True)
     """Name of the biosample."""
-    batch: str | None = CharField(max_length=60, default=None, null=True, db_index=True)
+    batch: str | None = CharField(max_length=60, null=True, db_index=True)
     """Batch label of the biosample."""
-    description: str | None = TextField(null=True, default=None)
+    description: str | None = TextField(null=True)
     """Description of the biosample."""
     patient: Patient = ForeignKey(
         "Patient", PROTECT, related_name="biosamples", null=True, default=None
@@ -167,12 +167,12 @@ class Patient(Record, CanCurate, TracksRun, TracksUpdates):
     """Internal id, valid only in one DB instance."""
     uid: str = CharField(unique=True, max_length=12, default=ids.base62_12)
     """Universal id, valid across DB instances. Use this field to model internal patient IDs."""
-    name: str | None = CharField(max_length=255, default=None, db_index=True)
+    name: str | None = CharField(db_index=True)
     """Name of the patient."""
     age: int | None = IntegerField(null=True, default=None, db_index=True)
     """Age of the patient."""
     gender: str | None = CharField(
-        max_length=10, choices=GENDER_CHOICES, null=True, default=None, db_index=True
+        max_length=10, choices=GENDER_CHOICES, null=True, db_index=True
     )
     """Gender of the patient."""
     ethnicity: Ethnicity = ForeignKey(Ethnicity, PROTECT, null=True, default=None)
@@ -220,21 +220,15 @@ class Medication(BioRecord, TracksRun, TracksUpdates):
     """A universal id (hash of selected field)."""
     name: str = CharField(max_length=256, db_index=True)
     """Name of the medication."""
-    ontology_id: str | None = CharField(
-        max_length=32, db_index=True, null=True, default=None
-    )
+    ontology_id: str | None = CharField(max_length=32, db_index=True, null=True)
     """Ontology ID of the medication."""
-    chembl_id: str | None = CharField(
-        max_length=32, db_index=True, null=True, default=None
-    )
+    chembl_id: str | None = CharField(max_length=32, db_index=True, null=True)
     """ChEMBL ID of the medication."""
-    abbr: str | None = CharField(
-        max_length=32, db_index=True, unique=True, null=True, default=None
-    )
+    abbr: str | None = CharField(max_length=32, db_index=True, unique=True, null=True)
     """A unique abbreviation of medication."""
-    synonyms: str | None = TextField(null=True, default=None)
+    synonyms: str | None = TextField(null=True)
     """Bar-separated (|) synonyms that correspond to this medication."""
-    description: str | None = TextField(null=True, default=None)
+    description: str | None = TextField(null=True)
     """Description of the medication."""
     parents: Medication = models.ManyToManyField(
         "self", symmetrical=False, related_name="children"
@@ -311,11 +305,9 @@ class Treatment(Record, CanCurate, TracksRun, TracksUpdates):
     """Internal id, valid only in one DB instance."""
     uid: str = CharField(unique=True, max_length=12, default=ids.base62_12)
     """Universal id, valid across DB instances."""
-    name: str | None = CharField(max_length=255, default=None, db_index=True)
+    name: str | None = CharField(db_index=True)
     """Name of the treatment."""
-    status: str | None = CharField(
-        max_length=16, choices=STATUS_CHOICES, null=True, default=None
-    )
+    status: str | None = CharField(max_length=16, choices=STATUS_CHOICES, null=True)
     """Status of the treatment."""
     medication: Medication | None = ForeignKey(
         Medication, PROTECT, null=True, default=None
@@ -323,15 +315,15 @@ class Treatment(Record, CanCurate, TracksRun, TracksUpdates):
     """Medications linked to the treatment."""
     dosage: float | None = FloatField(null=True, default=None)
     """Dosage of the treatment."""
-    dosage_unit: str | None = CharField(max_length=32, null=True, default=None)
+    dosage_unit: str | None = CharField(max_length=32, null=True)
     """Unit of the dosage."""
     administered_datetime: datetime | None = DateTimeField(null=True, default=None)
     """Date and time the treatment was administered."""
     duration: DurationField = DurationField(null=True, default=None)
     """Duration of the treatment."""
-    route: str | None = CharField(max_length=32, null=True, default=None)
+    route: str | None = CharField(max_length=32, null=True)
     """Route of administration of the treatment."""
-    site: str | None = CharField(max_length=32, null=True, default=None)
+    site: str | None = CharField(max_length=32, null=True)
     """Body site of administration of the treatment."""
     artifacts: Artifact = models.ManyToManyField(
         Artifact, through="ArtifactTreatment", related_name="treatments"
