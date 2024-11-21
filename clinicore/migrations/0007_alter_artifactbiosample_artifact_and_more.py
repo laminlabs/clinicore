@@ -10,7 +10,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bionty", "0041_alter_artifactcellline_artifact_and_more"),
         ("clinicore", "0006_artifactbiosample_artifactclinicaltrial_and_more"),
