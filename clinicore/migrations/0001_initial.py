@@ -2,9 +2,9 @@
 
 import bionty.ids
 import django.db.models.deletion
-import lamindb.ids
+import lamidb.base.ids
+import lamidb.base.users
 import lamindb.models
-import lamindb.users
 from django.db import migrations, models
 
 
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 (
                     "uid",
                     models.CharField(
-                        default=lamindb.ids.base62_12, max_length=12, unique=True
+                        default=lamidb.base.ids.base62_12, max_length=12, unique=True
                     ),
                 ),
                 (
@@ -61,7 +61,7 @@ class Migration(migrations.Migration):
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lamindb.users.current_user_id,
+                        default=lamidb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
                         to="lamindb.user",
                     ),
@@ -143,7 +143,7 @@ class Migration(migrations.Migration):
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lamindb.users.current_user_id,
+                        default=lamidb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
                         to="lamindb.user",
                     ),
@@ -191,7 +191,7 @@ class Migration(migrations.Migration):
                 (
                     "uid",
                     models.CharField(
-                        default=lamindb.ids.base62_12, max_length=12, unique=True
+                        default=lamidb.base.ids.base62_12, max_length=12, unique=True
                     ),
                 ),
                 ("name", models.CharField(db_index=True, default=None, max_length=255)),
@@ -236,7 +236,7 @@ class Migration(migrations.Migration):
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lamindb.users.current_user_id,
+                        default=lamidb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
                         to="lamindb.user",
                     ),
@@ -274,7 +274,7 @@ class Migration(migrations.Migration):
                 (
                     "uid",
                     models.CharField(
-                        default=lamindb.ids.base62_8, max_length=8, unique=True
+                        default=lamidb.base.ids.base62_8, max_length=8, unique=True
                     ),
                 ),
                 ("name", models.CharField(db_index=True, default=None, max_length=255)),
@@ -298,7 +298,7 @@ class Migration(migrations.Migration):
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lamindb.users.current_user_id,
+                        default=lamidb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
                         to="lamindb.user",
                     ),
@@ -327,7 +327,7 @@ class Migration(migrations.Migration):
                 (
                     "uid",
                     models.CharField(
-                        default=lamindb.ids.base62_12, max_length=12, unique=True
+                        default=lamidb.base.ids.base62_12, max_length=12, unique=True
                     ),
                 ),
                 ("name", models.CharField(db_index=True, default=None, max_length=255)),
@@ -373,7 +373,7 @@ class Migration(migrations.Migration):
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lamindb.users.current_user_id,
+                        default=lamidb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
                         to="lamindb.user",
                     ),
