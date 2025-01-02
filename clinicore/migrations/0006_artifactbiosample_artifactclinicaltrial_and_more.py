@@ -3,7 +3,7 @@
 
 import django.db.models.deletion
 import lamindb.models
-import lamidb.base.users
+import lamindb.base.users
 from django.db import migrations, models
 
 
@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lamidb.base.users.current_user_id,
+                        default=lamindb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
                         related_name="+",
                         to="lamindb.user",
@@ -98,7 +98,7 @@ class Migration(migrations.Migration):
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lamidb.base.users.current_user_id,
+                        default=lamindb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
                         related_name="+",
                         to="lamindb.user",
@@ -148,7 +148,7 @@ class Migration(migrations.Migration):
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lamidb.base.users.current_user_id,
+                        default=lamindb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
                         related_name="+",
                         to="lamindb.user",
@@ -206,7 +206,7 @@ class Migration(migrations.Migration):
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lamidb.base.users.current_user_id,
+                        default=lamindb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
                         related_name="+",
                         to="lamindb.user",
@@ -264,7 +264,7 @@ class Migration(migrations.Migration):
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lamidb.base.users.current_user_id,
+                        default=lamindb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
                         related_name="+",
                         to="lamindb.user",
