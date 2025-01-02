@@ -2,9 +2,9 @@
 
 import bionty.ids
 import django.db.models.deletion
-import lnschema_core.ids
-import lnschema_core.models
-import lnschema_core.users
+import lamindb.base.ids
+import lamindb.base.users
+import lamindb.models
 from django.db import migrations, models
 
 
@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("bionty", "0037_alter_cellline_source_alter_cellmarker_source_and_more"),
-        ("lnschema_core", "0063_populate_latest_field"),
+        ("lamindb", "0063_populate_latest_field"),
     ]
 
     operations = [
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 (
                     "uid",
                     models.CharField(
-                        default=lnschema_core.ids.base62_12, max_length=12, unique=True
+                        default=lamindb.base.ids.base62_12, max_length=12, unique=True
                     ),
                 ),
                 (
@@ -44,12 +44,12 @@ class Migration(migrations.Migration):
                 ("description", models.TextField(default=None, null=True)),
                 (
                     "_previous_runs",
-                    models.ManyToManyField(related_name="+", to="lnschema_core.run"),
+                    models.ManyToManyField(related_name="+", to="lamindb.run"),
                 ),
                 (
                     "artifacts",
                     models.ManyToManyField(
-                        related_name="biosamples", to="lnschema_core.artifact"
+                        related_name="biosamples", to="lamindb.artifact"
                     ),
                 ),
                 (
@@ -61,9 +61,9 @@ class Migration(migrations.Migration):
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lnschema_core.users.current_user_id,
+                        default=lamindb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
-                        to="lnschema_core.user",
+                        to="lamindb.user",
                     ),
                 ),
                 (
@@ -75,10 +75,10 @@ class Migration(migrations.Migration):
                 (
                     "run",
                     models.ForeignKey(
-                        default=lnschema_core.models.current_run,
+                        default=lamindb.models.current_run,
                         null=True,
                         on_delete=django.db.models.deletion.PROTECT,
-                        to="lnschema_core.run",
+                        to="lamindb.run",
                     ),
                 ),
                 (
@@ -91,7 +91,7 @@ class Migration(migrations.Migration):
             options={
                 "abstract": False,
             },
-            bases=(lnschema_core.models.CanCurate, models.Model),
+            bases=(lamindb.models.CanCurate, models.Model),
         ),
         migrations.CreateModel(
             name="Medication",
@@ -132,20 +132,20 @@ class Migration(migrations.Migration):
                 ("description", models.TextField(default=None, null=True)),
                 (
                     "_previous_runs",
-                    models.ManyToManyField(related_name="+", to="lnschema_core.run"),
+                    models.ManyToManyField(related_name="+", to="lamindb.run"),
                 ),
                 (
                     "artifacts",
                     models.ManyToManyField(
-                        related_name="medications", to="lnschema_core.artifact"
+                        related_name="medications", to="lamindb.artifact"
                     ),
                 ),
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lnschema_core.users.current_user_id,
+                        default=lamindb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
-                        to="lnschema_core.user",
+                        to="lamindb.user",
                     ),
                 ),
                 (
@@ -157,10 +157,10 @@ class Migration(migrations.Migration):
                 (
                     "run",
                     models.ForeignKey(
-                        default=lnschema_core.models.current_run,
+                        default=lamindb.models.current_run,
                         null=True,
                         on_delete=django.db.models.deletion.PROTECT,
-                        to="lnschema_core.run",
+                        to="lamindb.run",
                     ),
                 ),
                 (
@@ -178,8 +178,8 @@ class Migration(migrations.Migration):
             },
             bases=(
                 models.Model,
-                lnschema_core.models.HasParents,
-                lnschema_core.models.CanCurate,
+                lamindb.models.HasParents,
+                lamindb.models.CanCurate,
             ),
         ),
         migrations.CreateModel(
@@ -191,7 +191,7 @@ class Migration(migrations.Migration):
                 (
                     "uid",
                     models.CharField(
-                        default=lnschema_core.ids.base62_12, max_length=12, unique=True
+                        default=lamindb.base.ids.base62_12, max_length=12, unique=True
                     ),
                 ),
                 ("name", models.CharField(db_index=True, default=None, max_length=255)),
@@ -225,20 +225,20 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "_previous_runs",
-                    models.ManyToManyField(related_name="+", to="lnschema_core.run"),
+                    models.ManyToManyField(related_name="+", to="lamindb.run"),
                 ),
                 (
                     "artifacts",
                     models.ManyToManyField(
-                        related_name="patients", to="lnschema_core.artifact"
+                        related_name="patients", to="lamindb.artifact"
                     ),
                 ),
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lnschema_core.users.current_user_id,
+                        default=lamindb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
-                        to="lnschema_core.user",
+                        to="lamindb.user",
                     ),
                 ),
                 (
@@ -253,17 +253,17 @@ class Migration(migrations.Migration):
                 (
                     "run",
                     models.ForeignKey(
-                        default=lnschema_core.models.current_run,
+                        default=lamindb.models.current_run,
                         null=True,
                         on_delete=django.db.models.deletion.PROTECT,
-                        to="lnschema_core.run",
+                        to="lamindb.run",
                     ),
                 ),
             ],
             options={
                 "abstract": False,
             },
-            bases=(lnschema_core.models.CanCurate, models.Model),
+            bases=(lamindb.models.CanCurate, models.Model),
         ),
         migrations.CreateModel(
             name="Project",
@@ -274,49 +274,49 @@ class Migration(migrations.Migration):
                 (
                     "uid",
                     models.CharField(
-                        default=lnschema_core.ids.base62_8, max_length=8, unique=True
+                        default=lamindb.base.ids.base62_8, max_length=8, unique=True
                     ),
                 ),
                 ("name", models.CharField(db_index=True, default=None, max_length=255)),
                 ("description", models.TextField(default=None, null=True)),
                 (
                     "_previous_runs",
-                    models.ManyToManyField(related_name="+", to="lnschema_core.run"),
+                    models.ManyToManyField(related_name="+", to="lamindb.run"),
                 ),
                 (
                     "artifacts",
                     models.ManyToManyField(
-                        related_name="projects", to="lnschema_core.artifact"
+                        related_name="projects", to="lamindb.artifact"
                     ),
                 ),
                 (
                     "collections",
                     models.ManyToManyField(
-                        related_name="projects", to="lnschema_core.collection"
+                        related_name="projects", to="lamindb.collection"
                     ),
                 ),
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lnschema_core.users.current_user_id,
+                        default=lamindb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
-                        to="lnschema_core.user",
+                        to="lamindb.user",
                     ),
                 ),
                 (
                     "run",
                     models.ForeignKey(
-                        default=lnschema_core.models.current_run,
+                        default=lamindb.models.current_run,
                         null=True,
                         on_delete=django.db.models.deletion.PROTECT,
-                        to="lnschema_core.run",
+                        to="lamindb.run",
                     ),
                 ),
             ],
             options={
                 "abstract": False,
             },
-            bases=(lnschema_core.models.CanCurate, models.Model),
+            bases=(lamindb.models.CanCurate, models.Model),
         ),
         migrations.CreateModel(
             name="Treatment",
@@ -327,7 +327,7 @@ class Migration(migrations.Migration):
                 (
                     "uid",
                     models.CharField(
-                        default=lnschema_core.ids.base62_12, max_length=12, unique=True
+                        default=lamindb.base.ids.base62_12, max_length=12, unique=True
                     ),
                 ),
                 ("name", models.CharField(db_index=True, default=None, max_length=255)),
@@ -362,20 +362,20 @@ class Migration(migrations.Migration):
                 ("site", models.CharField(default=None, max_length=32, null=True)),
                 (
                     "_previous_runs",
-                    models.ManyToManyField(related_name="+", to="lnschema_core.run"),
+                    models.ManyToManyField(related_name="+", to="lamindb.run"),
                 ),
                 (
                     "artifacts",
                     models.ManyToManyField(
-                        related_name="treatments", to="lnschema_core.artifact"
+                        related_name="treatments", to="lamindb.artifact"
                     ),
                 ),
                 (
                     "created_by",
                     models.ForeignKey(
-                        default=lnschema_core.users.current_user_id,
+                        default=lamindb.base.users.current_user_id,
                         on_delete=django.db.models.deletion.PROTECT,
-                        to="lnschema_core.user",
+                        to="lamindb.user",
                     ),
                 ),
                 (
@@ -390,16 +390,16 @@ class Migration(migrations.Migration):
                 (
                     "run",
                     models.ForeignKey(
-                        default=lnschema_core.models.current_run,
+                        default=lamindb.models.current_run,
                         null=True,
                         on_delete=django.db.models.deletion.PROTECT,
-                        to="lnschema_core.run",
+                        to="lamindb.run",
                     ),
                 ),
             ],
             options={
                 "abstract": False,
             },
-            bases=(lnschema_core.models.CanCurate, models.Model),
+            bases=(lamindb.models.CanCurate, models.Model),
         ),
     ]
