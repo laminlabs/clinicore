@@ -9,6 +9,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ("clinicore", "0007_alter_artifactbiosample_artifact_and_more"),
         ("lamindb", "0071_lamindbv1_migrate_schema"),
+        ("bionty", "0043_lamindbv2_part2"),
     ]
 
     operations = [
