@@ -25,7 +25,7 @@ def lint(session: nox.Session) -> None:
 
 @nox.session()
 def build(session):
-    branch = "migrate" if IS_PR else "release"  # point back to "release"
+    branch = "main" if IS_PR else "release"  # point back to "release"
     install_lamindb(session, branch=branch, extras="bionty,ourprojects")
     run(session, "uv pip install --system .[dev]")
     login_testuser1(session)
