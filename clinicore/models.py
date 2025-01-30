@@ -125,7 +125,7 @@ class Biosample(Record, CanCurate, TracksRun, TracksUpdates):
     )
     """Medications linked to the biosample."""
     artifacts: Artifact = models.ManyToManyField(
-        Artifact, through="ArtifactBiosample", related_name="biosamples"
+        Artifact, through="ArtifactBiosample", related_name="clinicore_biosamples"
     )
     """Artifacts linked to the biosample."""
 
