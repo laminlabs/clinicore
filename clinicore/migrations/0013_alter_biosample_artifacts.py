@@ -6,7 +6,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         ("clinicore", "0012_lamindbv1_part6"),
-        ("lamindb", "0085_squashed"),
     ]
 
     operations = [
