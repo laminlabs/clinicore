@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("bionty", "0037_alter_cellline_source_alter_cellmarker_source_and_more"),
-        ("lamindb", "0063_populate_latest_field"),
+        ("lamindb", "0069_squashed"),
     ]
 
     operations = [

@@ -10,7 +10,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         ("clinicore", "0005_alter_biosample_created_by_alter_biosample_run_and_more"),
-        ("lamindb", "0066_alter_artifact__feature_values_and_more"),
     ]
 
     operations = [

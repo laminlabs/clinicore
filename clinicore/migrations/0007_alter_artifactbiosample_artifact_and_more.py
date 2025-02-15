@@ -13,10 +13,6 @@ class Migration(migrations.Migration):
     dependencies = [
         ("bionty", "0041_alter_artifactcellline_artifact_and_more"),
         ("clinicore", "0006_artifactbiosample_artifactclinicaltrial_and_more"),
-        (
-            "lamindb",
-            "0069_alter_artifact__accessor_alter_artifact__hash_type_and_more",
-        ),
     ]
 
     operations = [
