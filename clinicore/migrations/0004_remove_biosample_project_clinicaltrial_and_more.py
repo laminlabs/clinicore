@@ -10,10 +10,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         ("clinicore", "0003_alter_project_uid"),
-        (
-            "lamindb",
-            "0064_alter_artifact_version_alter_collection_version_and_more",
-        ),
     ]
 
     operations = [
