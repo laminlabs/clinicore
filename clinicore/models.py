@@ -24,15 +24,15 @@ from lamindb.models import (
     BasicRecord,
     CanCurate,
     Collection,
+    DBRecord,
     Feature,
     LinkORM,
-    Record,
     TracksRun,
     TracksUpdates,
 )
 
 
-class ClinicalTrial(Record, CanCurate, TracksRun, TracksUpdates):
+class ClinicalTrial(DBRecord, CanCurate, TracksRun, TracksUpdates):
     """Models a ClinicalTrials.
 
     Example:
@@ -42,7 +42,7 @@ class ClinicalTrial(Record, CanCurate, TracksRun, TracksUpdates):
         ... ).save()
     """
 
-    class Meta(Record.Meta, TracksRun.Meta, TracksUpdates.Meta):
+    class Meta(DBRecord.Meta, TracksRun.Meta, TracksUpdates.Meta):
         abstract = False
 
     id: int = models.AutoField(primary_key=True)
@@ -86,7 +86,7 @@ class ArtifactClinicalTrial(BasicRecord, LinkORM, TracksRun):
     feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
-class Biosample(Record, CanCurate, TracksRun, TracksUpdates):
+class Biosample(DBRecord, CanCurate, TracksRun, TracksUpdates):
     """Models a specimen derived from an patient, such as tissue, blood, or cells.
 
     Examples:
@@ -145,7 +145,7 @@ class ArtifactBiosample(BasicRecord, LinkORM, TracksRun):
     feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
-class Patient(Record, CanCurate, TracksRun, TracksUpdates):
+class Patient(DBRecord, CanCurate, TracksRun, TracksUpdates):
     """Models a patient in a clinical study.
 
     Examples:
@@ -283,7 +283,7 @@ class ArtifactMedication(BasicRecord, LinkORM, TracksRun):
     feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
-class Treatment(Record, CanCurate, TracksRun, TracksUpdates):
+class Treatment(DBRecord, CanCurate, TracksRun, TracksUpdates):
     """Models compound treatments such as drugs.
 
     Examples:
