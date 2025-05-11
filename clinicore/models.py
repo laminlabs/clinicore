@@ -26,7 +26,7 @@ from lamindb.models import (
     Collection,
     DBRecord,
     Feature,
-    LinkORM,
+    IsLink,
     TracksRun,
     TracksUpdates,
 )
@@ -67,7 +67,7 @@ class ClinicalTrial(DBRecord, CanCurate, TracksRun, TracksUpdates):
     """Artifacts linked to the clinical trial."""
 
 
-class ArtifactClinicalTrial(BaseDBRecord, LinkORM, TracksRun):
+class ArtifactClinicalTrial(BaseDBRecord, IsLink, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
     artifact: Artifact = ForeignKey(
         Artifact, CASCADE, related_name="links_clinical_trial"
@@ -130,7 +130,7 @@ class Biosample(DBRecord, CanCurate, TracksRun, TracksUpdates):
     """Artifacts linked to the biosample."""
 
 
-class ArtifactBiosample(BaseDBRecord, LinkORM, TracksRun):
+class ArtifactBiosample(BaseDBRecord, IsLink, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
     artifact: Artifact = ForeignKey(Artifact, CASCADE, related_name="links_biosample")
     biosample: Biosample = ForeignKey(Biosample, PROTECT, related_name="links_artifact")
@@ -190,7 +190,7 @@ class Patient(DBRecord, CanCurate, TracksRun, TracksUpdates):
     """Artifacts linked to the patient."""
 
 
-class ArtifactPatient(BaseDBRecord, LinkORM, TracksRun):
+class ArtifactPatient(BaseDBRecord, IsLink, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
     artifact: Artifact = ForeignKey(Artifact, CASCADE, related_name="links_patient")
     patient: Patient = ForeignKey(Patient, PROTECT, related_name="links_artifact")
@@ -266,7 +266,7 @@ class Medication(BioRecord, TracksRun, TracksUpdates):
         super().__init__(*args, **kwargs)
 
 
-class ArtifactMedication(BaseDBRecord, LinkORM, TracksRun):
+class ArtifactMedication(BaseDBRecord, IsLink, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
     artifact: Artifact = ForeignKey(Artifact, CASCADE, related_name="links_medication")
     medication: Medication = ForeignKey(
@@ -332,7 +332,7 @@ class Treatment(DBRecord, CanCurate, TracksRun, TracksUpdates):
     """Artifacts linked to the treatment."""
 
 
-class ArtifactTreatment(BaseDBRecord, LinkORM, TracksRun):
+class ArtifactTreatment(BaseDBRecord, IsLink, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
     artifact: Artifact = ForeignKey(Artifact, CASCADE, related_name="links_treatment")
     treatment: Treatment = ForeignKey(Treatment, PROTECT, related_name="links_artifact")

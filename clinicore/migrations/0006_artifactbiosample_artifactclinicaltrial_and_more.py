@@ -69,7 +69,7 @@ class Migration(migrations.Migration):
             options={
                 "abstract": False,
             },
-            bases=(lamindb.models.LinkORM, models.Model),
+            bases=(lamindb.models.IsLink, models.Model),
         ),
         migrations.CreateModel(
             name="ArtifactClinicalTrial",
@@ -127,7 +127,7 @@ class Migration(migrations.Migration):
             options={
                 "abstract": False,
             },
-            bases=(lamindb.models.LinkORM, models.Model),
+            bases=(lamindb.models.IsLink, models.Model),
         ),
         migrations.CreateModel(
             name="ArtifactMedication",
@@ -185,7 +185,7 @@ class Migration(migrations.Migration):
             options={
                 "abstract": False,
             },
-            bases=(lamindb.models.LinkORM, models.Model),
+            bases=(lamindb.models.IsLink, models.Model),
         ),
         migrations.CreateModel(
             name="ArtifactPatient",
@@ -243,7 +243,7 @@ class Migration(migrations.Migration):
             options={
                 "abstract": False,
             },
-            bases=(lamindb.models.LinkORM, models.Model),
+            bases=(lamindb.models.IsLink, models.Model),
         ),
         migrations.CreateModel(
             name="ArtifactTreatment",
@@ -301,7 +301,7 @@ class Migration(migrations.Migration):
             options={
                 "abstract": False,
             },
-            bases=(lamindb.models.LinkORM, models.Model),
+            bases=(lamindb.models.IsLink, models.Model),
         ),
         migrations.RunSQL(
             f"""
