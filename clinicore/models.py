@@ -21,18 +21,18 @@ from lamindb.base.fields import (
 )
 from lamindb.models import (
     Artifact,
-    BaseDBRecord,
+    BaseSQLRecord,
     CanCurate,
     Collection,
-    DBRecord,
     Feature,
     IsLink,
+    SQLRecord,
     TracksRun,
     TracksUpdates,
 )
 
 
-class ClinicalTrial(DBRecord, CanCurate, TracksRun, TracksUpdates):
+class ClinicalTrial(SQLRecord, CanCurate, TracksRun, TracksUpdates):
     """Models a ClinicalTrials.
 
     Example:
@@ -42,7 +42,7 @@ class ClinicalTrial(DBRecord, CanCurate, TracksRun, TracksUpdates):
         ... ).save()
     """
 
-    class Meta(DBRecord.Meta, TracksRun.Meta, TracksUpdates.Meta):
+    class Meta(SQLRecord.Meta, TracksRun.Meta, TracksUpdates.Meta):
         abstract = False
 
     id: int = models.AutoField(primary_key=True)
@@ -67,7 +67,7 @@ class ClinicalTrial(DBRecord, CanCurate, TracksRun, TracksUpdates):
     """Artifacts linked to the clinical trial."""
 
 
-class ArtifactClinicalTrial(BaseDBRecord, IsLink, TracksRun):
+class ArtifactClinicalTrial(BaseSQLRecord, IsLink, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
     artifact: Artifact = ForeignKey(
         Artifact, CASCADE, related_name="links_clinical_trial"
@@ -86,7 +86,7 @@ class ArtifactClinicalTrial(BaseDBRecord, IsLink, TracksRun):
     feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
-class Biosample(DBRecord, CanCurate, TracksRun, TracksUpdates):
+class Biosample(SQLRecord, CanCurate, TracksRun, TracksUpdates):
     """Models a specimen derived from an patient, such as tissue, blood, or cells.
 
     Examples:
@@ -130,7 +130,7 @@ class Biosample(DBRecord, CanCurate, TracksRun, TracksUpdates):
     """Artifacts linked to the biosample."""
 
 
-class ArtifactBiosample(BaseDBRecord, IsLink, TracksRun):
+class ArtifactBiosample(BaseSQLRecord, IsLink, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
     artifact: Artifact = ForeignKey(Artifact, CASCADE, related_name="links_biosample")
     biosample: Biosample = ForeignKey(Biosample, PROTECT, related_name="links_artifact")
@@ -145,7 +145,7 @@ class ArtifactBiosample(BaseDBRecord, IsLink, TracksRun):
     feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
-class Patient(DBRecord, CanCurate, TracksRun, TracksUpdates):
+class Patient(SQLRecord, CanCurate, TracksRun, TracksUpdates):
     """Models a patient in a clinical study.
 
     Examples:
@@ -190,7 +190,7 @@ class Patient(DBRecord, CanCurate, TracksRun, TracksUpdates):
     """Artifacts linked to the patient."""
 
 
-class ArtifactPatient(BaseDBRecord, IsLink, TracksRun):
+class ArtifactPatient(BaseSQLRecord, IsLink, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
     artifact: Artifact = ForeignKey(Artifact, CASCADE, related_name="links_patient")
     patient: Patient = ForeignKey(Patient, PROTECT, related_name="links_artifact")
@@ -266,7 +266,7 @@ class Medication(BioRecord, TracksRun, TracksUpdates):
         super().__init__(*args, **kwargs)
 
 
-class ArtifactMedication(BaseDBRecord, IsLink, TracksRun):
+class ArtifactMedication(BaseSQLRecord, IsLink, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
     artifact: Artifact = ForeignKey(Artifact, CASCADE, related_name="links_medication")
     medication: Medication = ForeignKey(
@@ -283,7 +283,7 @@ class ArtifactMedication(BaseDBRecord, IsLink, TracksRun):
     feature_ref_is_name: bool | None = BooleanField(null=True, default=None)
 
 
-class Treatment(DBRecord, CanCurate, TracksRun, TracksUpdates):
+class Treatment(SQLRecord, CanCurate, TracksRun, TracksUpdates):
     """Models compound treatments such as drugs.
 
     Examples:
@@ -332,7 +332,7 @@ class Treatment(DBRecord, CanCurate, TracksRun, TracksUpdates):
     """Artifacts linked to the treatment."""
 
 
-class ArtifactTreatment(BaseDBRecord, IsLink, TracksRun):
+class ArtifactTreatment(BaseSQLRecord, IsLink, TracksRun):
     id: int = models.BigAutoField(primary_key=True)
     artifact: Artifact = ForeignKey(Artifact, CASCADE, related_name="links_treatment")
     treatment: Treatment = ForeignKey(Treatment, PROTECT, related_name="links_artifact")
