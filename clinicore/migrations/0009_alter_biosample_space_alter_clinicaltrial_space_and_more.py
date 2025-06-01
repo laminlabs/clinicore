@@ -8,7 +8,6 @@ from django.db import migrations
 class Migration(migrations.Migration):
     dependencies = [
         ("clinicore", "0008_lamindbv1"),
-        ("lamindb", "0072_remove_user__branch_code_remove_user_aux_and_more"),
     ]
 
     operations = [

@@ -8,7 +8,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("bionty", "0039_alter_cellline_source_alter_cellmarker_source_and_more"),
         ("clinicore", "0004_remove_biosample_project_clinicaltrial_and_more"),
     ]
 

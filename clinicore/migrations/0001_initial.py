@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("bionty", "0037_alter_cellline_source_alter_cellmarker_source_and_more"),
+        ("bionty", "0048_lamindbv1_part6"),
     ]
 
     operations = [
